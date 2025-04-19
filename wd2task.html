@@ -1,0 +1,108 @@
+Here’s an example of a user-friendly and interactive stopwatch web application. It includes functions for starting, pausing, resetting, and tracking lap times:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .stopwatch {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 300px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .time {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .lap-times {
+            text-align: left;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Stopwatch</h1>
+    <div class="stopwatch">
+        <div class="time" id="time-display">00:00:00</div>
+        <div class="buttons">
+            <button id="start-button">Start</button>
+            <button id="pause-button">Pause</button>
+            <button id="reset-button">Reset</button>
+            <button id="lap-button">Lap</button>
+        </div>
+        <div class="lap-times" id="lap-times">
+            <h2>Lap Times:</h2>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval;
+        let lapCounter = 1;
+
+        const timeDisplay = document.getElementById('time-display');
+        const lapTimes = document.getElementById('lap-times');
+
+        function formatTime(time) {
+            const milliseconds = Math.floor((time % 1000) / 10);
+            const seconds = Math.floor((time / 1000) % 60);
+            const minutes = Math.floor((time / (1000 * 60)) % 60);
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(milliseconds).padStart(2, '0')}`;
+        }
+
+        function updateTimeDisplay() {
+            timeDisplay.textContent = formatTime(elapsedTime);
+        }
+
+        document.getElementById('start-button').addEventListener('click', () => {
+            if (!timerInterval) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(() => {
+                    elapsedTime = Date.now() - startTime;
+                    updateTimeDisplay();
+                }, 10);
+            }
+        });
+
+        document.getElementById('pause-button').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        });
+
+        document.getElementById('reset-button').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            elapsedTime = 0;
+            updateTimeDisplay();
+            lapTimes.innerHTML = '<h2>Lap Times:</h2>';
+            lapCounter = 1;
+        });
+
+        document.getElementById('lap-button').addEventListener('click', () => {
+            const lapTime = document.createElement('div');
+            lapTime.textContent = `Lap ${lapCounter++}: ${formatTime(elapsedTime)}`;
+            lapTimes.appendChild(lapTime);
+        });
+    </script>
+</body>
+</html>
